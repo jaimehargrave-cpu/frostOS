@@ -1,6 +1,6 @@
 ENTRY(_start)
-
-OUTPUT_FORMAT("elf64-x86-64")
+OUTPUT_FORMAT(elf64-x86-64)
+OUTPUT_ARCH(i386:x86-64)
 
 SECTIONS
 {
@@ -13,23 +13,24 @@ SECTIONS
 
     .text ALIGN(4K) :
     {
-        *(.text)
+        KEEP(*(.text.boot))
+        *(.text .text.*)
     }
 
     .rodata ALIGN(4K) :
     {
-        *(.rodata*)
+        *(.rodata .rodata.*)
     }
 
     .data ALIGN(4K) :
     {
-        *(.data)
+        *(.data .data.*)
     }
 
-    .bss ALIGN(4K) :
+    .bss ALIGN(4K) (NOLOAD) :
     {
         *(COMMON)
-        *(.bss)
+        *(.bss .bss.*)
     }
 
     /DISCARD/ :

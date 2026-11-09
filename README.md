@@ -1,60 +1,49 @@
 # frostOS
 
-A tiny Rust hobby operating system targeting x86_64 and booting in UTM or any compatible x86_64 VM or machine.
+A tiny Rust hobby operating system targeting x86_64 PCs. The first milestone boots through GRUB's Multiboot2 interface and prints to the VGA text console.
 
-## Goal
+## Build prerequisites
 
-The first milestone is a simple, bootable kernel that prints `Hello, frostOS!` on the screen.
-
-## Prerequisites
-
-- Rust toolchain
-- `x86_64-elf-grub-mkrescue` (provided by the Homebrew `x86_64-elf-grub` formula on macOS)
+- Rust and Cargo
+- `x86_64-elf-grub-mkrescue`
 - `xorriso`
-
-Install Rust:
-
-```bash
-rustup-init
-rustup target add x86_64-unknown-none
-```
 
 On macOS with Homebrew:
 
-```bash
+```sh
 brew install x86_64-elf-grub xorriso
+rustup target add x86_64-unknown-none
 ```
 
-The Homebrew GRUB tool is prefixed, so `build.sh` uses `x86_64-elf-grub-mkrescue` by default. If your installation provides the tool under another name or path, set `GRUB_MKRESCUE` when building, for example:
+## Build the ISO
 
-```bash
-GRUB_MKRESCUE=/path/to/grub-mkrescue ./build.sh
-```
+From the repository root:
 
-## Build
-
-```bash
+```sh
 chmod +x build.sh
 ./build.sh
 ```
 
-This creates `frostOS.iso`.
+This produces `frostOS.iso`. The kernel uses a small 32-bit assembly entry point to establish paging and switch the CPU into long mode before calling the Rust kernel. GRUB loads it using Multiboot2.
 
-## Run in UTM
+## Boot in UTM
 
-1. Open UTM.
-2. Create a new Linux VM.
-3. Choose a 64-bit x86_64 guest.
-4. Attach `frostOS.iso` as the boot disk.
-5. Start the VM.
+This initial image targets a legacy BIOS-style x86_64 PC VM and VGA text output; it is not an ARM/Apple Silicon-native kernel and does not boot through UEFI yet.
 
-You should see the boot menu and then the greeting text.
+1. In UTM, create an **Emulate** VM with the **x86_64** architecture (not an ARM virtualized guest).
+2. Use a standard PC/VGA-compatible machine/display and attach `frostOS.iso` as the CD/DVD boot image.
+3. Start the VM and select frostOS in GRUB if the menu appears.
+
+The console should show `Hello, frostOS!` and a second line confirming the boot path. This project has not been tested in UTM yet; if it fails, share the exact build output or what appears on screen so we can diagnose it.
+
+## Current console
+
+The first console writes directly to the classic 80x25 VGA text buffer, handles newlines and scrolling, and updates the hardware text cursor. This is a legacy PC console; later we can add a framebuffer console for UEFI and modern virtual graphics devices.
 
 ## Next milestones
 
-- text console with cursor
 - keyboard input
-- interrupt handling
-- simple shell
+- interrupts and exception reporting
+- framebuffer support
 - memory management
-- multitasking
+- a simple shell
