@@ -9,7 +9,7 @@ The first milestone is a simple, bootable kernel that prints `Hello, frostOS!` o
 ## Prerequisites
 
 - Rust toolchain
-- `grub-mkrescue`
+- `x86_64-elf-grub-mkrescue` (provided by the Homebrew `x86_64-elf-grub` formula on macOS)
 - `xorriso`
 
 Install Rust:
@@ -22,7 +22,13 @@ rustup target add x86_64-unknown-none
 On macOS with Homebrew:
 
 ```bash
-brew install grub xorriso
+brew install x86_64-elf-grub xorriso
+```
+
+The Homebrew GRUB tool is prefixed, so `build.sh` uses `x86_64-elf-grub-mkrescue` by default. If your installation provides the tool under another name or path, set `GRUB_MKRESCUE` when building, for example:
+
+```bash
+GRUB_MKRESCUE=/path/to/grub-mkrescue ./build.sh
 ```
 
 ## Build
