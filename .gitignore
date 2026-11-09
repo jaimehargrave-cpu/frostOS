@@ -1,0 +1,4 @@
+target/
+*.iso
+*.img
+.DS_Store
